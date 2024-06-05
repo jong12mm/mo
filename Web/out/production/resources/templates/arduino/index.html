@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>INDEX</h1>
+<div>
+    <fieldset style="width:250px;">
+        <legend>CONNECTION</legend>
+        <div style="display:flex;justify-content : space-between;">
+            <input class="com_port">
+            <button class="conn_btn">CONN</button>
+        </div>
+    </fieldset>
+    <fieldSet style="width:250px;">
+        <legend>LED</legend>
+        <div style="display:flex;justify-content:space-between;">
+            <button class="led_on">LED ON</button>
+            |
+            <button class="led_off">LED OFF</button>
+        </div>
+    </fieldSet>
+</div>
+<div style="display:flex;">
+    <fieldSet style="width:100px;">
+        <legend>LED상태</legend>
+        <span class="led_info"></span>
+    </fieldSet>
+    <fieldSet style="width:100px;">
+        <legend>온도센서</legend>
+        <span class="tmp_info"></span>
+    </fieldSet>
+    <fieldSet style="width:100px;">
+        <legend>조도센서</legend>
+        <span class="light_info"></span>
+    </fieldSet>
+    <fieldSet style="width:100px;">
+        <legend>초음파센서</legend>
+        <span class="distance_info"></span>
+    </fieldSet>
+</div>
+
+<!-- axios cdn -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+    // 필요 요소 변수 저장
+    const led_on_btn = document.querySelector('.led_on');  // .led_on 클래스를 가진 요소를 찾아 led_on_btn에 저장
+    const led_off_btn = document.querySelector('.led_off'); // .led_off 클래스를 가진 요소를 찾아 led_off_btn에 저장
+
+    const led_info_el = document.querySelector('.led_info');  // .led_info 클래스를 가진 요소를 찾아 led_info_el에 저장
+    const tmp_info_el = document.querySelector('.tmp_info');  // .tmp_info 클래스를 가진 요소를 찾아 tmp_info_el에 저장
+    const light_info_el = document.querySelector('.light_info');  // .light_info 클래스를 가진 요소를 찾아 light_info_el에 저장
+    const distance_info_el = document.querySelector('.distance_info'); // .distance_info 클래스를 가진 요소를 찾아 distance_info_el에 저장
+
+    let messageInterval = null; // 변수 초기화, 주기적인 요청을 위한 인터벌 ID를 저장
+
+    // 연결 버튼 이벤트 추가
+    const conn_btn = document.querySelector('.conn_btn'); // .conn_btn 클래스를 가진 요소를 찾아 conn_btn에 저장
+    conn_btn.addEventListener('click', function() { // conn_btn 클릭 이벤트 추가
+        // 입력된 포트 가져오기
+        const port = document.querySelector('.com_port').value;
+        axios.get(`/arduino/connection/${port}`) // 해당 포트로 Arduino 연결 요청
+            .then(response => {
+                console.log(response.status);
+                if (response.status == 200) { // 연결에 성공하면
+                    if (messageInterval != null) {
+                        clearInterval(messageInterval); // 기존 요청 반복 제거
+                    }
+                    // 연결에 성공하면 1초 주기로 센서 데이터 요청
+                    messageInterval = setInterval(() => {
+                        req_led_info_func();
+                        req_tmp_info_func();
+                        req_light_info_func();
+                        req_distance_info_func();
+                    }, 1000);
+                }
+            })
+            .catch(error => {}); // 에러 처리
+    });
+
+    // LED ON 버튼 클릭 시 실행되는 함수
+    led_on_btn.addEventListener('click', function() {
+        axios.get('/arduino/led/1') // LED를 켜기 위한 요청
+            .then(response => {})
+            .catch(error => {}); // 에러 처리
+    });
+
+    // LED OFF 버튼 클릭 시 실행되는 함수
+    led_off_btn.addEventListener('click', function() {
+        axios.get('/arduino/led/0') // LED를 끄기 위한 요청
+            .then(response => {})
+            .catch(error => {}); // 에러 처리
+    });
+
+    //----------------------------------------------------------------
+    // Message Received Interval Function
+    //----------------------------------------------------------------
+    // 1초마다 반복 요청하는 함수들
+    const req_led_info_func = () => {
+        axios.get('/arduino/message/led') // LED 상태 정보를 요청
+            .then(response => {
+                led_info_el.innerHTML = response.data; // 응답 데이터를 led_info_el에 표시
+            })
+            .catch(error => {}); // 에러 처리
+    }
+
+    const req_tmp_info_func = () => {
+        axios.get('/arduino/message/tmp') // 온도 정보를 요청
+            .then(response => {
+                tmp_info_el.innerHTML = response.data; // 응답 데이터를 tmp_info_el에 표시
+            })
+            .catch(error => {}); // 에러 처리
+    }
+
+    const req_light_info_func = () => {
+        axios.get('/arduino/message/light') // 조도 정보를 요청
+            .then(response => {
+                light_info_el.innerHTML = response.data; // 응답 데이터를 light_info_el에 표시
+            })
+            .catch(error => {}); // 에러 처리
+    }
+
+    const req_distance_info_func = () => {
+        axios.get('/arduino/message/distance') // 거리 정보를 요청
+            .then(response => {
+                distance_info_el.innerHTML = response.data; // 응답 데이터를 distance_info_el에 표시
+            })
+            .catch(error => {}); // 에러 처리
+    }
+
+</script>
+
+</body>
+</html>
