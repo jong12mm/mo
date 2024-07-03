@@ -1,0 +1,150 @@
+/*********************************/
+-- ### 데이터베이스에서의 함수###
+/*********************************/
+
+-- COUNT(X) : x의 개수를 변환한다.
+-- x는 열(Column)이거나 리터럴(Literal)
+
+-- CAST(x AS y) : 값을 x를 y형태로 변환한다
+-- 주로 UNSIGNED 값들ㅇ르 연산할 때 음수가 나올 가능성이 있다면 사용.
+-- UNSIGNED 값 끼리 계산하였을 떄 결과로 음수가 나오면 오류가 남
+
+-- CAST( `대상 열` AS SIGNED) : `대상 열` 값을 SIGNED로 변경
+-- CAST(`대상 열` AS UNSIGNED) : `대상 열` 값을 UNSIGNED로 변경
+
+-- CEILING(X) : 값 X에 대해 올림
+SELECT CEILING(3.14);
+
+-- FLOOR(X) : 값 X에 대해 내림
+SELECT FLOOR (3.14);
+
+-- ROUND(X) : 값 X에 대해 반올림
+SELECT ROUND(3.14);
+
+-- CONCAT(A,B,...) : 주어진 값을 이어붙임
+SELECT CONCAT(100,'%','입니다','.');
+
+CREATE SCHEMA `shopdb`;
+
+-- 문제 01
+-- userTbl 만들기
+-- 열 : 
+-- 			userID(8뮨자 null x, PK)
+-- 			name(10문자 null x)
+-- 			birth(정수, null x)
+-- 			address(20문자, null x)
+-- 			monile1(10문자)
+-- 			mobile2(10문자)
+-- 			height(정수)
+-- 			mDate(날씨)
+
+drop table `shopdb`.`userTbl`;
+CREATE TABLE `shopdb`.`userTbl`(
+`userID` VARCHAR(8) NOT NULL PRIMARY KEY ,
+`name` VARCHAR(10) NOT NULL,
+`birthYear` INT NOT NULL,
+`address` VARCHAR(20) NOT NULL,
+`mobile1` VARCHAR(10),
+`mobile2` VARCHAR(10),
+`height` SMALLINT,
+`mDate` TIMESTAMP
+);
+INSERT INTO `shopdb`.`userTbl`(`userID`,`name`,`birthYear`,`address`,`mobile1`,`mobile2`,`height`,`mDate`) 
+VALUES('BBK', '바비킴', 1973, '서울', 010,00000000,176,'2013-05-05');
+
+INSERT INTO `shopdb`.`userTbl`(`userID`,`name`,`birthYear`,`address`,`mobile1`,`mobile2`,`height`,`mDate`) 
+VALUES
+('EJW', '은지원',1972, '경북',011 ,88888888,174,'2014-03-03'),
+('JCW', '조관우', 1965,'경기', 018,99999999,172,'2010-10-10'),
+('JYP', '조용필', 1950, '경기', 011, 44444444, 166, '2009-04-04'),
+('KBS', '김범수', 1979, '경남', 011, 22222222, 173, '2012-04-04'),
+('KKH', '김경호', 1971, '전남', 019, 33333333, 177, '2007-07-07'),
+('LJB', '임재범', 1963, '서울', 016, 66666666, 182, '2009-09-09'),
+('LSG', '이승기', 1987, '서울', 011, 11111111, 182, '2008-08-08');
+
+INSERT INTO `shopdb`.`userTbl`(`userID`,`name`,`birthYear`,`address`,`height`,`mDate`) 
+VALUES ('SSK', '성시경', 1979, '서울', 186, '2013-12-12'),
+('YJS','윤종신',1969,'경남',170,'2005-05-05');
+
+
+drop table `shopdb`.`userTbl`;
+-- Buy_Tbl 만들기
+-- 열 : 
+-- 		num(정수 null x, PK)
+-- 		uesrID(8문자 , nullx
+-- 		prodName(10문자, null x)
+-- 		groupName(20문자, null x)
+-- 		price(정수, null x)
+-- 		amount( 정수, null x)alter
+
+DROP TABLE `shopdb`.`buyTbl`;
+CREATE TABLE `shopdb`.`buyTbl`(
+`num` INT NOT NULL NOT NULL,
+`userID` VARCHAR(8) NOT NULL,
+`prodName` VARCHAR(10) NOT NULL,
+`groupName` VARCHAR(20),
+`price` INT NOT NULL,
+`amount` SMALLINT NOT NULL,
+CONSTRAINT PRIMARY KEY(`num`),
+CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `shopdb`.`userTbl`(`userID`)
+);
+
+INSERT INTO `shopdb`.`buyTbl`VALUES(1,'KBS','운동화',NULL,30,2);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(2,'KBS','노트북','전자',1000,1);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(3,'JYP','모니터','전자',200,1);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(4,'BBK','모니터','전자',200,5);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(5,'KBS','청바지','의류',50,3);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(6,'BBK','메모리','전자',80,10);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(7,'SSK','책','서적',15,5);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(8,'EJW','책','서적',15,2);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(9,'EJW','청바지','의류',50,1);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(10,'BBK','운동화',NULL,30,2);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(11,'EJW','책','서적',15,1);
+
+INSERT INTO `shopdb`.`buyTbl` VALUES(12,'BBK','운동화',NULL,30,2);
+
+/***********************************/
+### 제약 조건 ###
+/***********************************/
+
+-- 기본키 : CONSTRAINT PRIMARY KEY (`<열 이름>`,...)
+-- 유니크 : CONSTRAINT UNIQUE (`<열 이름>`,...)
+-- 외래키 : CONSTRAINT FOREIGN KEY (`<대상 열>`,...) REFERENCES `스키마`,`테이블` (`<참고 열>,...)
+-- 단, 외래키가 걸리는 `참고 열`은 기본키이거나 UNIQUE여야 한다. 그리고 `<대상 열>`과 `<참고 열>`은 타입이 같아야 한다.
+
+-- FOREIGN KEY ==> 중요함!!!
+
+-- 문제 
+
+-- 1. 구매량(amount)가 5개 이상인 행을 출력
+
+SELECT * FROM  `shopdb`.`buyTbl` WHERE `amount` >= 5;
+
+-- 2. 가격(price) 50 이상 500 이하인 행의 userid와 probname 만 출력
+
+SELECT `buyTbl`.`userId`,`buyTbl`.`prodName` FROM `shopdb`.`buyTbl` WHERE `price` >= 50 and `price` <= 500;
+
+-- 3. 구매량(amount)이 10 이상 이거나 가격이 100 이상인 행 출력
+SELECT * FROM  `shopdb`.`buyTbl` WHERE `amount` >= 10 or `price` >= 100 ;
+
+-- 4. UserId 가 K로 사작하는 행 출력
+
+SELECT * FROM  `shopdb`.`buyTbl` WHERE `userID` LIKE 'K%'; 
+
+-- 5. 상품(probName)이 책이거나 userId가 W로 끝나는 행 출력
+
+SELECT * FROM  `shopdb`.`buyTbl` WHERE `prodName` = '책' or `userID` LIKE '%W';
+
+-- 6. groupname이 비어있지 않은 행만 출력(<>)
+
+SELECT * FROM  `shopdb`.`buyTbl` WHERE `groupName` <> 'NULL';
