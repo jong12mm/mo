@@ -1,0 +1,17 @@
+예매번호 String id pk
+예매좌석 String seat
+예매자이름 String name
+경기정보 String gameinfo
+예매날짜/시간 Localdatetime date
+예매상태 String bookstatus
+
+결제번호 String payid pk
+예매번호 fk
+
+결제금액
+결제방법
+결제날짜/시간
+결제상태(성공/실패)
+
+
+

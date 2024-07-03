@@ -1,0 +1,15 @@
+const int ledPin = 13; 		// 디지털 핀번호 13을 상수 ledPin으로 정의합니다
+
+void setup() {
+  Serial.begin(9600); 		// Serial.begin() 함수를 사용하여 9600 
+				   보드레이트의 속도로 시리얼 통신을 시작합니다
+  pinMode(ledPin, OUTPUT); 		// ledPin을 출력 핀으로 설정합니다
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH); 		// ledPin에 HIGH을 출력하여 LED를 킵니다
+  delay(1000); 			// 1초 동안 대기합니다
+  
+  digitalWrite(ledPin, LOW);		// ledPin에 LOW을 출력하여 LED를 끕니다
+  delay(1000); 			// 1초 동안 대기합니다
+}				// 1초마다 깜빡이는 LED

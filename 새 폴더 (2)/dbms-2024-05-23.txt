@@ -1,0 +1,154 @@
+-- SCHEMA  : `region`
+-- TABLE : `provinces`
+-- COLUMN : 	`index` 			`code`	 `name`
+-- PROPERTY :   TINYINT UNSIGNED VARCHAR(3) VARCHAR(3)
+-- NULL : 		       X 			X			  X
+-- KEY : 		PRIMARY KEY
+-- CONSTRAINT :						UNIQUE		UNIQUE
+
+
+
+CREATE SCHEMA `region`;
+DROP TABLE `provinces`;
+CREATE TABLE `region`.`provinces`(
+	`index` TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+    `code` VARCHAR(3) NOT NULL,
+    `name` VARCHAR(3) NOT NULL,
+    CONSTRAINT UNIQUE (`code`),
+    CONSTRAINT UNIQUE (`name`)
+);
+
+USE `region`;
+ALTER TABLE provinces CONVERT TO CHARSET UTF8;
+INSERT INTO `region`.`provinces` VALUES(1, '02', '서울');
+INSERT INTO `region`.`provinces` VALUES(2, '031', '경기');
+INSERT INTO `region`.`provinces` VALUES(3, '032', '인천');
+INSERT INTO `region`.`provinces` VALUES(4, '033', '강원');
+INSERT INTO `region`.`provinces` VALUES(5, '041', '충청남');
+INSERT INTO `region`.`provinces` VALUES(6, '042', '대전');
+INSERT INTO `region`.`provinces` VALUES(7, '043', '충청북');
+INSERT INTO `region`.`provinces` VALUES(8, '044', '세종');
+INSERT INTO `region`.`provinces` VALUES(9, '051', '부산');
+INSERT INTO `region`.`provinces` VALUES(10, '052', '을산');
+INSERT INTO `region`.`provinces` VALUES(11, '053', '대구');
+INSERT INTO `region`.`provinces` VALUES(12, '054', '경상북');
+INSERT INTO `region`.`provinces` VALUES(13, '055', '경상남');
+INSERT INTO `region`.`provinces` VALUES(14, '061', '전라남');
+INSERT INTO `region`.`provinces` VALUES(15, '062', '광주');
+INSERT INTO `region`.`provinces` VALUES(16, '063', '전라북');
+INSERT INTO `region`.`provinces` VALUES(17, '064', '제주');
+
+SELECT * FROM `region`.`provinces`;
+
+-- 문제:
+-- name 컬럼이 `영천`인 행의 개수를 조회하고, 결과를 code 컬럼 기준으로 정렬하세요.
+SELECT `code`, `name` FROM `region`.`provinces` WHERE `name` = '영천' ORDER BY `code`;
+-- 문제:
+-- 이름이 `대`로 시작하는 모든 행의 code와 name을 조회하고, 결과를 code 걸럼 기준으로 정렬하세요.
+
+SELECT `code`, `name` FROM `region`.`provinces` WHERE `name` LIKE '대%' ORDER BY `code`;
+
+-- 문제:
+-- 이름이 '남'으로 끝나는 모든 행의 code와 name을 조회하고, 결과를 code 컬럼 기준으로 정렬하세요.
+SELECT `code`, `name` FROM `region`.`provinces` WHERE `name` LIKE '%남' ORDER BY `code`;
+-- 문제:
+-- code 컬럼이 '05'로 시작하는 모든 행의 code와 name을 조회하고, 결과를 code 컬럼 기준으로 정렬하세요.
+
+SELECT `code`, `name` FROM `region`.`provinces` WHERE `code` LIKE '05%' ORDER BY `code`;
+
+-- SCHEMA : `region`
+-- TABLE : `pops`
+-- COLUMN : 	`index` 	`year` 		`province_index`		 `pop`
+-- PROPERTY : INT UNSIGNED   YEAR 		 TINYINT UNSIGNED 		INT UNSIGNED 
+-- NULL : 			X 		  X 				X 					X
+-- KEY : 	  PRIMARY KEY										FOREIGN KEY(`provinces`.`index`)
+-- CONSTRAINT : 			UNIQUE 			UNIQUE
+
+DROP TABLE `region`.`pops`;
+CREATE TABLE `region`.`pops`(
+	`index` INT UNSIGNED NOT NULL,
+    `year` YEAR NOT NULL,
+    `province_index` TINYINT UNSIGNED NOT NULL,
+    `pop` INT UNSIGNED NOT NULL,
+    CONSTRAINT PRIMARY KEY (`index`),
+    CONSTRAINT UNIQUE (`year`, `province_index`),
+    CONSTRAINT FOREIGN KEY (`province_index`) REFERENCES `region`.`provinces`(`index`)
+);
+
+ALTER TABLE pops CONVERT TO CHARSET UTF8;
+ALTER TABLE pops MODIFY `index` INT UNSIGNED NOT NULL AUTO_INCREMENT; 
+DESC `region`.`pops`;
+
+INSERT INTO `region`.`pops` (`year`, `province_index`, `pop`)
+VALUES ('2021', 1, 9736027),
+       ('2020', 1, 9911088),
+       ('2019', 1, 10010983),
+       ('2021', 2, 13925862),
+       ('2020', 2, 13807158),
+       ('2019', 2, 13653984),
+       ('2021', 3, 3014739),
+       ('2020', 3, 3010476),
+       ('2019', 3, 3029285),
+       ('2021', 4, 1555876),
+       ('2020', 4, 1560172),
+       ('2019', 4, 1560571),
+       ('2021', 5, 2181835),
+       ('2020', 5, 2185575),
+       ('2019', 5, 2194384),
+       ('2021', 6, 1469543),
+       ('2020', 6, 1480777),
+       ('2019', 6, 1493979),
+       ('2021', 7, 1633472),
+       ('2020', 7, 1637897),
+       ('2019', 7, 1640721),
+       ('2021', 8, 376779),
+       ('2020', 8, 360907),
+       ('2019', 8, 346275),
+       ('2021', 9, 3396109),
+       ('2020', 9, 3438710),
+       ('2019', 9, 3466563),
+       ('2021', 10, 1138419),
+       ('2020', 10, 1153901),
+       ('2019', 10, 1168469),
+       ('2021', 11, 2412642),
+       ('2020', 11, 2446144),
+       ('2019', 11, 2468222),       
+       ('2021', 12, 2677709),
+       ('2020', 12, 2691891),
+       ('2019', 12, 2723955),
+       ('2021', 13, 3377331),
+       ('2020', 13, 3407455),
+       ('2019', 13, 3438676),
+       ('2021', 14, 1865459),
+       ('2020', 14, 1884455),
+       ('2019', 14, 1903383),
+       ('2021', 15, 1462545),
+       ('2020', 15, 1471385),
+       ('2019', 15, 1480293),
+       ('2021', 16, 1817186),
+       ('2020', 16, 1835392),
+       ('2019', 16, 1851991),
+       ('2021', 17, 697476),
+       ('2020', 17, 697578),
+       ('2019', 17, 696657);
+-- 지역번호 지역명 2021년 인구 
+SELECT `provinces`.`code` AS '지역번호', `provinces`.`name` AS '지역명', `pops`.`pop` AS '2021년 인구' 
+FROM `region`.`provinces`
+INNER JOIN `region`.`pops`
+ON `provinces`.`index` = `pops`.`province_index`
+WHERE `year` = '2021';
+
+-- CAST (`some_col` AS SIGNED). 주로 UNSIGNED 인 값들을 연산할 때 음수가 나올 가능성이 있다면 사용.
+-- 대비율 (21년도 인수 수 0 19 년도 인구 수 ) / 19년도 인구 수 X 100
+-- 소숫점 두자리까지 반올림 %
+
+SELECT `provinces`.`code` AS '지역번호', `provinces`.`name` AS '지역명', A.`pop` AS '2019년 인구', B.`pop` AS '2020년 인구' , C.`pop` AS '2021년 인구'
+FROM `region`.`provinces`
+LEFT JOIN `region`.`pops` AS A
+ON `provinces`.`index` = A.`province_index`
+LEFT JOIN `region`.`pops` AS B
+ON `provinces`.`index` = B.`province_index`
+LEFT JOIN `region`.`pops` AS C
+ON `provinces`.`index` =  C.`province_index`
+WHERE A.`year` = '2019' AND B.`year`= '2020' AND C.`year`='2021';
+
